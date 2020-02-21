@@ -1,0 +1,28 @@
+<a href="new">New</a>
+{{#each winery}}
+<h2>{{_id}}</h2>
+<table class="ui sortable celled table">
+    <thead>
+        <tr>
+            <th class="sorted ascending">ID</th>
+            <th>Date</th>
+            <th>Guests</th>
+            <th>Special Instructions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each bookings}}
+        <tr>
+            <td>{{_id}}</td>
+            <td>{{bookingDate}}</td>
+            <td>{{guestCount}}</td>
+            <td>{{specialInstructions}}</td>
+        </tr>
+        {{/each}}
+    <tfoot>
+        <tr>
+            <th colspan='4'>Wines: {{wines.length}}</th>
+        </tr>
+    </tfoot>
+</table>
+{{/each}}

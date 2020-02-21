@@ -1,0 +1,64 @@
+<div class="jumbo cover background" style="background: url('/images/background_main.jpg');background-size:cover;">
+  <div id="EntryField" class="hover ui box">
+    <div class="ui form container">
+      <h4 class="ui dividing header">Find your next tasting.</h4>
+      <div class="field">
+        <div class="field">
+          <label>Where</label>
+          <input type="text" id="Locaton" name="name" required>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field">
+          <label>When</label>
+          <input type="text" name="name" placeholder="Date (TODO)" required>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field">
+          <label>Guests</label>
+          <div class="ui fluid search selection dropdown">
+            <input type="hidden" name="country" required>
+            <i class="dropdown icon"></i>
+            <div class="default text">How many guests?</div>
+            <div class="menu">
+              <div class="item" data-value="1">1</div>
+              <div class="item" data-value="2">2</div>
+              <div class="item" data-value="3">3</div>
+              <div class="item" data-value="4">4</div>
+              <div class="item" data-value="5+">5+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="ui purple button right floated">Search</button>
+    </div> <!-- Form Container -->
+  </div>
+</div>
+
+<script>
+  var geok = "AIzaSyAajj_zdA7JHV_wDNfVWj3dfzKMkeFVyEo";
+  $(".selection.dropdown").dropdown();
+  console.log("pre-ready");
+  $(document).ready((event) => {
+    console.log("ready");
+    var usePosition = (position) => {
+      $.ajax("https://maps.googleapis.com/maps/api/geocode/json?latlng="+position.coords.latitude+","+position.coords.longitude+"&key=" + geok)
+      .then(x => {
+        x.results.forEach(item => {
+          console.log(item.formatted_address);
+          if (item.types[0] == "locality"){
+            var city = item.formatted_address.split(",")[0] + "," + item.formatted_address.split(",")[1]
+            $("#Locaton").val(city)
+          }
+        })
+      })
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(usePosition);
+    } else {
+      console.log("Err")
+    }
+  })
+</script>

@@ -1,0 +1,217 @@
+<div class='ui container'>
+    <div class="ui three top attached steps">
+        <div id="step-1" class="active step">
+            <i class="info icon"></i>
+            <div class="content">
+                <div class="title">Information</div>
+                <div class="description">Choose your shipping options</div>
+            </div>
+        </div>
+        <div id="step-2" class="step">
+            <i class="pin icon"></i>
+            <div class="content">
+                <div class="title">Location</div>
+                <div class="description">Enter billing information</div>
+            </div>
+        </div>
+        <div id="step-3" class="step">
+            <i class="checkmark icon"></i>
+            <div class="content">
+                <div class="title">Confirm</div>
+                <div class="description">Verify order details</div>
+            </div>
+        </div>
+    </div>
+    <form class="ui form" method="POST" enctype="multipart/form-data" novalidate>
+        <input style="display:none;" id="lat" name='lat' />
+        <input style="display:none;" id="lng" name='lng' />
+        <div class="ui attached segment">
+            <div class="ui active tab" data-tab="step-1">
+                <div class="ui container">
+                    <div class="field">
+                        <label>Winery Name</label>
+                        <input type="text" name='name' required />
+                    </div>
+                    <div class="field">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phoneNumber" name='phone' required />
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+
+                        <input type="email" name='email' required />
+                    </div>
+                    <div class="field">
+                        <label>Webite</label>
+                        <input type="text" name='website' />
+                    </div>
+                    <div class='two fields'>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" name="menu">
+                                <label>Do you have food?</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" name="reservations">
+                                <label>Do you accept resetvations?</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Upload photos</label>
+                        <div class="ui fluid">
+                            <input type="file" name="avatar" multiple />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <button class='ui button disabled'>Previous</button>
+                        <button class='ui button right floated' onclick="setStep('step-2');return false;">Next</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ui tab" data-tab="step-2">
+                <div class="field">
+                    <label>Address Line 1</label>
+                    <input type="text" class="location-input" name='address1' id="address1" />
+                </div>
+                <div class="field">
+                    <label>Address Line 2</label>
+                    <input type="text" class="location-input" name='address2' id="address2" />
+                </div>
+                <div class="field">
+                    <div class="field">
+                        <label>Country</label>
+                        <select class="location-input" id="countryDropdown" name="country"></select>
+                    </div>
+                </div>
+                <div class='two fields'>
+                    <div class="field">
+                        <label>Province/State</label>
+                        <select class="location-input" id="stateDropdown" name="province"></select>
+                    </div>
+                    <div class='field'>
+                        <label>Postal/Zip Code</label>
+                        <input type="text" class="location-input" name='postal' id="postal" />
+                    </div>
+                </div>
+                <div class="field">
+                    <button class='ui button' onclick="setStep('step-1');return false;">Previous</button>
+                    <button class='ui button right floated' onclick="setStep('step-3');return false;">Next</button>
+                </div>
+            </div>
+            <div class="ui tab" data-tab="step-3">
+                <div id="map" style="height:500px;"></div>
+                <br>
+                <div class="field">
+                    <button class='ui button' onclick="setStep('step-2');return false;">Previous</button>
+                    <button class='ui button right floated'>Submit</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.demo.menu .item').tab();
+        populateCountries("countryDropdown", "stateDropdown");
+    });
+
+    $('.step').on('click', function () {
+        setStep($(this).attr('id'));
+    });
+
+    var setStep = function (id) {
+        $('#' + id).addClass('active').siblings().removeClass('active').removeClass('active');
+        $("div").find(`[data-tab='${id}']`).addClass("active").siblings().removeClass("active");
+    }
+</script>
+<script>
+    const isNumericInput = (event) => {
+        const key = event.keyCode;
+        return ((key >= 48 && key <= 57) || // Allow number line
+            (key >= 96 && key <= 105) // Allow number pad
+        );
+    };
+
+    const isModifierKey = (event) => {
+        const key = event.keyCode;
+        return (event.shiftKey === true || key === 35 || key === 36) || // Allow Shift, Home, End
+            (key === 8 || key === 9 || key === 13 || key === 46) || // Allow Backspace, Tab, Enter, Delete
+            (key > 36 && key < 41) || // Allow left, up, right, down
+            (
+                // Allow Ctrl/Command + A,C,V,X,Z
+                (event.ctrlKey === true || event.metaKey === true) &&
+                (key === 65 || key === 67 || key === 86 || key === 88 || key === 90)
+            )
+    };
+
+    const enforceFormat = (event) => {
+        // Input must be of a valid number format or a modifier key, and not longer than ten digits
+        if (!isNumericInput(event) && !isModifierKey(event)) {
+            event.preventDefault();
+        }
+    };
+
+    const formatToPhone = (event) => {
+        if (isModifierKey(event)) { return; }
+
+        // I am lazy and don't like to type things more than once
+        const target = event.target;
+        const input = target.value.replace(/\D/g, '').substring(0, 10); // First ten digits of input only
+        const zip = input.substring(0, 3);
+        const middle = input.substring(3, 6);
+        const last = input.substring(6, 10);
+
+        if (input.length > 6) { target.value = `(${zip}) ${middle} - ${last}`; }
+        else if (input.length > 3) { target.value = `(${zip}) ${middle}`; }
+        else if (input.length > 0) { target.value = `(${zip}`; }
+    };
+
+    const inputElement = document.getElementById('phoneNumber');
+    inputElement.addEventListener('keydown', enforceFormat);
+    inputElement.addEventListener('keyup', formatToPhone);
+</script>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-4UavBoKcYVsfW1bKp5aCL9BvukthmVI&callback=initMap" async
+    defer></script>
+
+<script type='text/javascript'>
+    var map;
+    var geocoder;
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: -34.397, lng: 150.644 },
+            zoom: 8
+        });
+        geocoder = new google.maps.Geocoder();
+
+    }
+
+    $('.location-input').on('change blur', (e) => {
+        var address1 = $("#address1").val();
+        var address2 = $("#address2").val();
+        var country = $("#countryDropdown").val() == "-1" ? "" : $("#countryDropdown").val();
+
+        var lat = $("#lat");
+        var lng = $("#lng");
+
+        var address = (address1 + address2 + country);
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == 'OK') {
+                map.setCenter(results[0].geometry.location);
+                lat.val(results[0].geometry.location.lat());
+                lng.val(results[0].geometry.location.lng());
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    });
+</script>

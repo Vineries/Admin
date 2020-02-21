@@ -1,0 +1,30 @@
+<div class="ui container">
+    <form class="ui form" method="POST" enctype="multipart/form-data" novalidate>
+        <div class="field">
+            <label>First Name</label>
+            <input type="text" name='name' />
+        </div>
+        <div class="field">
+            <label>Description</label>
+            <textarea type="text" name='description'></textarea>
+        </div>
+        <div class="field">
+            <label>Upload photos</label>
+            <div class="ui fluid">
+                <input type="file" name="avatar" multiple />
+            </div>
+        </div>
+        <div class="field">
+            <select name='category' id='Category'>
+                <option value='White'>White</option>
+                <option value='Red'>Red</option>
+                <option value='Rose'>Rose</option>
+                <option value='Sparkling'>Sparkling</option>
+                <option value='Champagne'>Champagne</option>
+                <option value='Ice'>Ice</option>
+                <option value='Mulled'>Mulled</option>
+            </select>
+        </div>
+        <button class="ui button" type="submit">Submit</button>
+    </form>
+</div>

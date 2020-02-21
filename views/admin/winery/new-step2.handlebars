@@ -1,0 +1,40 @@
+<div class="ui container">
+    <div class="ui fluid">
+        <div id="s3-uploader"></div>
+    </div>
+    <br>
+    <div class="ui fluid">
+        <button class="ui button green floated right float-right" type="submit">Submit</button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var uploader = new qq.s3.FineUploader({
+            element: document.getElementById("s3-uploader"),
+            request: {
+                endpoint: "vineries.s3.amazonaws.com",
+                accessKey: "AKIA4465SVUIEUGZS4FP",
+            },
+            signature: {
+                endpoint: "/s3/s3handler",
+                version: "4"
+            },
+            objectProperties: {
+                region: "ca-centeral-1"
+            },
+            validation: {
+                allowedExtensions: ["gif", "jpeg", "jpg", "png"],
+                acceptFiles: "image/gif, image/jpeg, image/png",
+                sizeLimit: 5000000,
+                itemLimit: 3
+            },
+            retry: {
+                enableAuto: true
+            },
+            paste: {
+                targetElement: document,
+                promptForName: true
+            }
+        });
+    });
+</script>

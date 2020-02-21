@@ -1,0 +1,45 @@
+{{ to_edit.name }} <br>
+{{ to_edit.address1 }} <br>
+{{ to_edit.website }} <br>
+{{ to_edit.email }} <br>
+
+{{#each to_edit.wines }}
+ <a href="/admin/wine/{{this}}">{{this}}</a> <br>
+{{/each}}
+<!--
+<select class="ui fluid search dropdown" multiple="">
+    <option value="">State</option>
+    {{#each regions}}
+    <option value="{{name}}">{{name}}</option>
+    {{/each}}
+</select>
+-->
+
+<form id="addWineForm">
+    <input name="wine" />
+    <input name="winery" style="display:none" value="{{to_edit._id}}" />
+    <input type="submit" text="Add Wine" value="Add Wine" />
+</form>
+
+<script>
+    $("#addWineForm").on('submit', function(a,b,c) {
+        a.preventDefault();
+        var $inputs = $('#addWineForm :input');
+        fetch("/admin/winery/addWine", {
+            method:"POST",
+            body: JSON.stringify({
+                wine: $($inputs[0]).val(),
+                winery: $($inputs[1]).val()
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(x => {
+            console.log(x);
+        }).catch(err => {
+            console.error(err);
+        })
+
+    })
+</script>

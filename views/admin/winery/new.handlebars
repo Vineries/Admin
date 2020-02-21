@@ -1,0 +1,94 @@
+<div class="ui container">
+    <form class="ui form" method="POST" enctype="multipart/form-data">
+        <div class="field">
+            <label>Winery Name</label>
+            <input type="text" name='name' required />
+        </div>
+        <div class="field">
+            <label>Phone Number</label>
+            <input type="tel" id="phoneNumber" name='phone' required />
+        </div>
+        <div class="field">
+            <label>Email</label>
+
+            <input type="email" name='email' required />
+        </div>
+        <div class="field">
+            <label>Webite</label>
+            <input type="text" name='website' />
+        </div>
+        <div class='two fields'>
+            <div class="field">
+                <div class="ui toggle checkbox">
+                    <input type="checkbox" name="menu">
+                    <label>Do you have food?</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui toggle checkbox">
+                    <input type="checkbox" name="reservations">
+                    <label>Do you accept resetvations?</label>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label>Address Line 1</label>
+            <input type="text" class="location-input" name='address1' id="address1" />
+        </div>
+        <div class="field">
+            <label>Address Line 2</label>
+            <input type="text" class="location-input" name='address2' id="address2" />
+        </div>
+        <div class="field">
+            <div class="field">
+                <label>Country</label>
+                <select class="location-input" id="countryDropdown" name="country"></select>
+            </div>
+        </div>
+        <div class='two fields'>
+            <div class="field">
+                <label>Province/State</label>
+                <select class="location-input" id="stateDropdown" name="province"></select>
+            </div>
+            <div class='field'>
+                <label>Postal/Zip Code</label>
+                <input type="text" class="location-input" name='postal' id="postal" />
+            </div>
+        </div>
+        <div class="ui fluid">
+            <button class="ui button green floated right float-right" type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+        populateCountries("countryDropdown", "stateDropdown");
+    });
+</script>
+
+<script type='text/javascript'>
+    var geocoder;
+    function initMap() {
+        geocoder = new google.maps.Geocoder();
+
+    }
+
+    $('.location-input').on('change blur', (e) => {
+        var address1 = $("#address1").val();
+        var address2 = $("#address2").val();
+        var country = $("#countryDropdown").val() == "-1" ? "" : $("#countryDropdown").val();
+
+        var lat = $("#lat");
+        var lng = $("#lng");
+
+        var address = (address1 + address2 + country);
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == 'OK') {
+                lat.val(results[0].geometry.location.lat());
+                lng.val(results[0].geometry.location.lng());
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    });
+</script>
